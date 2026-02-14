@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WALLER | HARDCORE CULTURE</title>
+
+    <link rel="icon" href="https://i.ibb.co/d0gMc01f/LOGO-camiseta-branca.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* ESTILOS VISUAIS (Não precisa mexer aqui a menos que queira mudar o visual) */
+        :root { --bg: #050505; --text: #ffffff; --accent: #cccccc; --border: #222; }
+        * { margin:0; padding:0; box-sizing:border-box; outline:0; text-decoration:none; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg) url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); color: var(--text); padding-bottom: 80px; scroll-behavior: smooth; }
+        h1, h2, h3, button, .tagline { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+        .flex { display: flex; justify-content: center; align-items: center; }
+        .btn { cursor: pointer; transition: .2s; border: none; font-weight: 700; text-transform: uppercase; }
+        header { padding: 40px 20px; text-align: center; border-bottom: 4px solid var(--text); background: #000; }
+        .logo-img { max-width: 220px; width: 80%; filter: invert(1); }
+        .tagline { font-size: 0.8rem; letter-spacing: 6px; color: var(--accent); margin-top: 10px; font-weight: 700; }
+        .gender-area { display: flex; gap: 15px; padding: 20px; max-width: 1100px; margin: 0 auto; }
+        .gender-card { flex: 1; height: 450px; position: relative; cursor: pointer; overflow: hidden; border: 2px solid #111; filter: grayscale(1); transition: 0.5s; background: #000; }
+        .gender-card:hover { filter: grayscale(0); border-color: #fff; }
+        .gender-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; opacity: 0.6; }
+        .gender-card:hover img { transform: scale(1.1); opacity: 0.9; }
+        .gender-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 40px; }
+        .gender-overlay h2 { font-size: 2.2rem; border: 3px solid #fff; padding: 10px 30px; background: #000; letter-spacing: 5px; }
+        .controls-bar { display: none; position: sticky; top: 0; background: rgba(0,0,0,0.95); padding: 15px 20px; border-bottom: 1px solid var(--border); justify-content: space-between; align-items: center; z-index: 100; }
+        .side-panel { position: fixed; top: 0; left: 0; width: 100%; max-width: 300px; height: 100vh; background: #000; border-right: 1px solid #fff; z-index: 1100; padding: 30px; transform: translateX(-100%); transition: 0.4s; }
+        .side-panel.open { transform: translateX(0); }
+        .filter-group { margin-bottom: 30px; }
+        .filter-group h4 { font-size: 0.8rem; color: var(--accent); margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .filter-opt { display: block; padding: 12px 0; color: #666; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        .filter-opt:hover, .filter-opt.active { color: #fff; padding-left: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { background: #0a0a0a; border: 1px solid #1a1a1a; transition: .3s; }
+        .card:hover { border-color: var(--accent); }
+        .img-box { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #000; position: relative; cursor: zoom-in; }
+        .p-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.4s; } 
+        .card:hover .p-img { opacity: 1; transform: scale(1.03); }
+        .info { padding: 20px; border-top: 1px solid #1a1a1a; }
+        .tit { font-size: 1.3rem; margin: 5px 0; line-height: 1; }
+        .prc { font-size: 1.2rem; margin-bottom: 15px; font-family: 'Oswald'; }
+        .sizes { display: flex; gap: 5px; margin-bottom: 15px; }
+        .s-btn { flex: 1; height: 40px; border: 1px solid #333; background: transparent; color: #fff; font-size: 0.8rem; }
+        .s-btn.active { background: #fff; color: #000; border-color: #fff; }
+        .add { background: transparent; color: #fff; border: 2px solid #fff; padding: 15px; width: 100%; }
+        .add:hover { background: #fff; color: #000; }
+        .modal-overlay { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-content { max-width: 800px; width: 90%; display: flex; gap: 20px; background: #000; border: 1px solid #333; padding: 20px; position: relative; }
+        .m-img { width: 100%; border: 1px solid var(--accent); cursor: zoom-out; }
+        .close { position: absolute; top: -45px; right: 0; color: #fff; font-size: 40px; cursor: pointer; }
+        .c-box { background: #000; width: 100%; max-width: 450px; height: 100vh; position: fixed; right: 0; top: 0; padding: 30px; border-left: 2px solid #fff; display: flex; flex-direction: column; transition: 0.4s; transform: translateX(100%); z-index: 1100; }
+        .c-box.open { transform: translateX(0); }
+        .cart-f { position: fixed; right: 20px; bottom: 20px; width: 60px; height: 60px; z-index: 990; background: #fff; color: #000; cursor: pointer; }
+        .count { position: absolute; top: -5px; right: -5px; background: var(--accent); color: #000; font-size: 12px; width: 22px; height: 22px; border-radius: 50%; font-weight: bold; }
+        #tst { visibility:hidden; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--accent); color:#000; padding:15px 30px; z-index:2000; font-weight:bold; font-family:'Oswald'}
+        @media (max-width: 768px) { .gender-area { flex-direction: column; } .gender-card { height: 300px; } .modal-content { flex-direction: column; overflow-y: auto; max-height: 90vh; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" onclick="location.reload()"><img src="https://i.ibb.co/d0gMc01f/LOGO-camiseta-branca.png" class="logo-img"></a>
+        <p class="tagline">HARDCORE CULTURE // EST. 2024</p>
+    </header>
+
+    <!-- TELA INICIAL (MASC / FEM) -->
+    <div id="genderNav" class="gender-area">
+        <div class="gender-card" onclick="setGender('masc')">
+            <img src="https://i.ibb.co/x8wpJ6zk/Generated-Image-February-14-2026-6-41-PM.jpg" alt="Masculino">
+            <div class="gender-overlay"><h2>MASCULINO</h2></div>
+        </div>
+        <div class="gender-card" onclick="setGender('fem')">
+            <img src="https://i.ibb.co/XZYsV9pD/Generated-Image-February-14-2026-6-50-PM.jpg" alt="Feminino">
+            <div class="gender-overlay"><h2>FEMININO</h2></div>
+        </div>
+    </div>
+
+    <!-- BARRA DE FILTROS -->
+    <div id="topBar" class="controls-bar">
+        <button class="btn" onclick="tog('filterPanel', 1)" style="background:transparent; color:#fff; border:1px solid #333; padding:10px;">
+            <i class="fas fa-sliders-h"></i> FILTROS
+        </button>
+        <select id="sortSelect" onchange="render()" style="background:#000; color:#fff; border:1px solid #333; padding:10px; font-family:'Oswald'">
+            <option value="relevancia">RELEVÂNCIA (VENDAS)</option>
+            <option value="menor">MENOR PREÇO</option>
+            <option value="maior">MAIOR PREÇO</option>
+        </select>
+    </div>
+
+    <!-- PAINEL DE FILTROS (SIDEBAR) -->
+    <div id="filterPanel" class="side-panel">
+        <div class="flex" style="justify-content:space-between; margin-bottom:40px">
+            <h3>FILTRAR</h3>
+            <span style="font-size:30px; cursor:pointer" onclick="tog('filterPanel', 0)">&times;</span>
+        </div>
+
+        <div class="filter-group">
+            <h4>CATEGORIA</h4>
+            <!-- TUTORIAL: Para adicionar uma nova categoria, basta copiar a linha abaixo e mudar o nome -->
+            <span class="filter-opt active" onclick="setCat('todos', this)">TODOS</span>
+            <span class="filter-opt" onclick="setCat('acessorios', this)">ACESSÓRIOS</span>
+            <span class="filter-opt" onclick="setCat('moletom', this)">MOLETOM</span>
+            <span class="filter-opt" onclick="setCat('oversized', this)">OVERSIZED</span>
+            <span class="filter-opt" onclick="setCat('regatas', this)">REGATAS</span>
+        </div>
+
+        <button class="btn" style="width:100%; padding:15px; background:#fff; color:#000;" onclick="tog('filterPanel', 0)">VER RESULTADOS</button>
+        <button class="btn" style="width:100%; padding:10px; background:transparent; color:#444; margin-top:10px; font-size:0.7rem;" onclick="location.reload()">VOLTAR AO INÍCIO</button>
+    </div>
+
+    <!-- GRID DE PRODUTOS -->
+    <div class="grid" id="cat"></div>
+
+    <!-- MODAL DETALHES -->
+    <div id="pModal" class="modal-overlay flex" onclick="tog('pModal',0)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="tog('pModal',0)">&times;</span>
+            <div style="flex:1"><img src="" id="mImg" class="m-img" onclick="tog('pModal',0)"></div>
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; padding: 20px;">
+                <h2 id="mTit"></h2>
+                <div id="mPrc" style="font-size:1.5rem; margin:15px 0;"></div>
+                <p id="mDesc" style="color:#666; line-height:1.6;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARRINHO -->
+    <div id="cartM" class="modal-overlay flex" onclick="tog('cartM',0)">
+        <div id="cBox" class="c-box" onclick="event.stopPropagation()">
+            <div class="flex" style="justify-content:space-between; margin-bottom:30px">
+                <h2>CARRINHO</h2>
+                <span style="font-size:30px;cursor:pointer" onclick="tog('cartM',0)">&times;</span>
+            </div>
+            <div id="cList" style="flex:1; overflow-y:auto"></div>
+            <div style="margin-top:20px; border-top: 1px solid #222; padding-top:20px">
+                <h3 id="cTot" style="text-align:right; margin-bottom:20px">TOTAL: R$ 0,00</h3>
+                <button class="btn add" onclick="pay()" style="background:#fff; color:#000; width:100%;">FINALIZAR NO WHATSAPP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE CARRINHO -->
+    <div class="cart-f float flex" onclick="tog('cartM',1)">
+        <i class="fas fa-shopping-bag"></i>
+        <div class="count flex" id="cnt">0</div>
+    </div>
+
+    <!-- AVISO -->
+    <div id="tst"></div>
+
+    <script>
+        /* ============================================================
+           TUTORIAL DE CADASTRO DE PRODUTOS
+           ============================================================ */
+        
+        const WHATSAPP_LOJA = "5511948434639"; 
+
+        const PRODUTOS = [
+            // EXEMPLO DE PRODUTO (Basta copiar este bloco para criar novos)
+            { 
+                id: 1, 
+                nome: "GOOD VIBES (GREY)", 
+                genero: "masc", 
+                categoria: "oversized", 
+                preco: 89.90, 
+                vendas: 150, // Quanto maior este número, mais pro topo ele fica na "Relevância"
+                tamanhos: ["P", "M", "G", "GG"], 
+                fotos: ["https://i.ibb.co/Gv8nxLbM/Generated-Image-February-14-2026-5-03-PM.jpg", "https://i.ibb.co/ynDT89Th/Generated-Image-February-14-2026-5-05-PM-1.jpg"], 
+                descricao: "Algodão 30.1 Penteado. Estampa em Silk Screen premium." 
+            },
+            { 
+                id: 2, 
+                nome: "HEAVY METAL WHITE", 
+                genero: "masc", 
+                categoria: "oversized", 
+                preco: 110.00, 
+                vendas: 80, 
+                tamanhos: ["G", "GG"], 
+                fotos: ["https://via.placeholder.com/600x800/111/fff?text=FRONT", "https://via.placeholder.com/600x800/333/fff?text=BACK"], 
+                descricao: "Edição de colecionador. Versão limitada." 
+            },
+            { 
+                id: 3, 
+                nome: "REGATA DARK PUNK", 
+                genero: "fem", 
+                categoria: "regatas", 
+                preco: 69.90, 
+                vendas: 200, 
+                tamanhos: ["P", "M"], 
+                fotos: ["https://via.placeholder.com/600x800/222/fff?text=REGATA+FEM"], 
+                descricao: "Corte cavado estilo punk rock." 
+            }
+        ];
+
+        /* ============================================================
+           LÓGICA DO SISTEMA (TECNOLOGIA)
+           ============================================================ */
+        let activeGender = null;
+        let activeCat = 'todos';
+        let cart = [];
+        const $ = id => document.getElementById(id);
+
+        function setGender(g) {
+            activeGender = g;
+            $('genderNav').style.display = 'none';
+            $('topBar').style.display = 'flex';
+            render();
+        }
+
+        function setCat(c, el) {
+            activeCat = c;
+            updateFilterStyle(el);
+            render();
+        }
+
+        function updateFilterStyle(el) {
+            if (!el) return;
+            el.parentElement.querySelectorAll('.filter-opt').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function render() {
+            const grid = $('cat');
+            if (!activeGender) return;
+            const sort = $('sortSelect').value;
+
+            // Filtragem
+            let list = PRODUTOS.filter(p => {
+                const gMatch = p.genero === activeGender;
+                const cMatch = activeCat === 'todos' || p.categoria === activeCat;
+                return gMatch && cMatch;
+            });
+
+            // Ordenação (Aqui entra o sistema de Vendas/Relevância)
+            if (sort === 'relevancia') list.sort((a,b) => b.vendas - a.vendas);
+            if (sort === 'menor') list.sort((a,b) => a.preco - b.preco);
+            if (sort === 'maior') list.sort((a,b) => b.preco - a.preco);
+
+            grid.innerHTML = list.length ? list.map(p => `
+                <div class="card" id="p-${p.id}">
+                    <div class="img-box" onclick="openDetails(${p.id})">
+                        <img src="${p.fotos[0]}" class="p-img" onmouseover="if('${p.fotos[1]}') this.src='${p.fotos[1]}'" onmouseout="this.src='${p.fotos[0]}'">
+                    </div>
+                    <div class="info">
+                        <h3 class="tit">${p.nome}</h3>
+                        <div class="prc">R$ ${p.preco.toFixed(2).replace('.',',')}</div>
+                        <div class="sizes">
+                            ${p.tamanhos.map(s => `<button class="btn s-btn" onclick="sz(this)">${s}</button>`).join('')}
+                        </div>
+                        <button class="btn add" onclick="add(${p.id})">ADICIONAR</button>
+                    </div>
+                </div>
+            `).join('') : '<div style="grid-column:1/-1; text-align:center; padding:80px; color:#444; border:1px dashed #222;">EM BREVE...<br><span style="font-size:0.7rem;">ESTAMOS PREPARANDO O PRÓXIMO DROP</span></div>';
+        }
+
+        function openDetails(id) {
+            const p = PRODUTOS.find(x => x.id === id);
+            $('mImg').src = p.fotos[0];
+            $('mTit').innerText = p.nome;
+            $('mPrc').innerText = `R$ ${p.preco.toFixed(2).replace('.',',')}`;
+            $('mDesc').innerText = p.descricao;
+            tog('pModal', 1);
+        }
+
+        function sz(b) {
+            b.parentElement.querySelectorAll('.s-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+        }
+
+        function add(id) {
+            const p = PRODUTOS.find(x => x.id === id);
+            const sel = $(`p-${id}`).querySelector('.s-btn.active');
+            if (!sel) return alert("⚠️ SELECIONE O TAMANHO!");
+            cart.push({ ...p, s: sel.innerText });
+            updateCart();
+            notif("ITEM ADICIONADO AO CARRINHO");
+        }
+
+        function updateCart() {
+            $('cnt').innerText = cart.length;
+            let t = 0;
+            $('cList').innerHTML = cart.map((x, i) => {
+                t += x.preco;
+                return `<div class="c-item" style="display:flex; gap:10px; margin-bottom:10px; border-bottom:1px solid #111; padding-bottom:10px;">
+                    <img src="${x.fotos[0]}" width="50" style="object-fit:cover; height:60px;">
+                    <div style="flex:1">
+                        <h4 style="font-size:0.8rem;">${x.nome}</h4>
+                        <p style="color:#666; font-size:0.75rem;">TAM: ${x.s} | R$ ${x.preco.toFixed(2)}</p>
+                    </div>
+                    <i class="fas fa-times" style="cursor:pointer; color:#444" onclick="cart.splice(${i},1);updateCart()"></i>
+                </div>`;
+            }).join('');
+            $('cTot').innerText = `TOTAL: R$ ${t.toFixed(2).replace('.',',')}`;
+        }
+
+        function pay() {
+            if (!cart.length) return;
+            let m = `SALVE WALLER! NOVO PEDIDO:\n\n${cart.map(i => `- ${i.nome} (${i.s}) - R$ ${i.preco.toFixed(2)}`).join('\n')}\n\n*TOTAL: ${$('cTot').innerText}*`;
+            window.open(`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(m)}`, '_blank');
+        }
+
+        function tog(id, s) { 
+            const el = $(id);
+            if(id === 'filterPanel' || id === 'cBox') {
+                s ? el.classList.add('open') : el.classList.remove('open');
+            } else {
+                el.style.display = s ? 'flex' : 'none';
+                if(id === 'cartM' && s) setTimeout(() => $('cBox').classList.add('open'), 10);
+                if(id === 'cartM' && !s) $('cBox').classList.remove('open');
+            }
+        }
+
+        function notif(t) {
+            const x = $('tst');
+            x.innerText = t; x.style.visibility = "visible";
+            setTimeout(() => x.style.visibility = "hidden", 2000);
+        }
+    </script>
+</body>
+</html>
